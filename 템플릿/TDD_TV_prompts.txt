@@ -1,0 +1,226 @@
+# 01. .cursorrules 초안 생성
+01_cursorrules_초안_생성
+
+[Persona] 당신은 임베디드/컨트롤러 모듈의 TDD 및 리팩토링을 돕는 시니어 C++ 엔지니어입니다.
+[Context] TDD_TV C++17 프로젝트에서 Cursor AI가 항상 따라야 하는 규칙을
+    프로젝트 루트의 .cursorrules로 작성하려고 합니다.
+[Task] 아래 요구를 만족하는 .cursorrules 내용을 작성하고 파일을 생성해줘.
+    - 기술 스택: C++17 + CMake + Google Test + GMock + ApprovalTests (+ gcov/lcov)
+    - 절대 규칙: 외부 제공 인터페이스인 Tuner.h 수정 금지, 채널 범위는 0~99로 제한, 실제 Tuner 대신 반드시 Fake 또는 Mock을 사용하여 의존성 격리
+    - 테스트 규칙: Given-When-Then, TEST_F, 경계값(채널 0, 99, 빈 목록, 세 자리 입력, Wrap-around) 포함
+    - 리팩토링 규칙: 테스트 Green 상태에서만 진행, std::cout 로직은 비즈니스 로직과 분리
+[Format] .cursorrules 파일에 그대로 붙여넣을 수 있는 텍스트
+[Wrap-up] 
+ - Report\ 디렉토리 아래에 작업 내용 보고서를 번호를 붙여 생성하고 저장
+ - 현재까지의 프롬프트 대화 전체를 Prompting\ 디렉토리 아래에 Export Transcript 해줘. Transcript 파일명은 보고서의 이름에서 _report 접미사를 뺀 것으로 해줘.
+
+
+
+
+# 02. 요구사항 분석 (Requirements Analysis)
+02_요구사항
+
+@README.md
+
+[Persona] 시니어 C++ QA 엔지니어 관점에서
+[Context] TDD_TV C++17 프로젝트 (CMake, Google Test, GMock)
+[Task] 요구사항을 C++ 구현 관점에서 재정리해줘.
+    1) 리모컨 기능별 비즈니스 규칙 표
+       - 숫자 버튼 입력 버퍼 처리 / 선호 채널 토글 / 다음 선호 채널 / 채널 검색 / 업&다운
+    2) 상태 관리 주의점 (입력 버퍼 -1 초기화 시점, 검색 목록과 선호 채널 목록의 정렬/유지)
+    3) 예외/경계값 조건 (채널 범위 0~99 이탈, 빈 선호 채널 목록에서의 다음 채널, Wrap-around)
+    4) Test Double 전략 (어떤 기능에 FakeTuner 상태 기반 검증이 좋고, 어떤 기능에 MockTuner 행위 기반 검증이 좋은지 명세)
+    5) Google Test 기준 테스트 시나리오 목록 (번호)
+[Format] Markdown (표 + 번호 목록). docs\ 디렉토리 아래 requirements_analysis.md로 저장
+[Wrap-up] 
+ - Report\ 디렉토리 아래에 작업 내용 보고서를 번호를 붙여 생성하고 저장
+ - 현재까지의 프롬프트 대화 전체를 Prompting\ 디렉토리 아래에 Export Transcript 해줘. Transcript 파일명은 보고서의 이름에서 _report 접미사를 뺀 것으로 해줘.
+
+
+
+
+
+# 03. 코드 품질 분석 (SOLID & Code Smell)
+03_코드_품질_분석_SOLID_Code_Smell
+
+
+@TVController.h @remoteKey.h
+
+[Persona] 시니어 C++ 아키텍트 + 모던 C++ 리뷰어입니다.
+[Task] TVController 클래스(특히 pushButton 메서드와 상태 변수들)를 SOLID/Code Smell 관점에서 분석해줘.
+    - SRP/OCP 위반 지점과 근거 (입력 처리와 채널 변경 로직의 혼재 등)
+    - Code Smell: Long Method (거대한 if-else/switch 체인), Primitive Obsession (상태를 단순 int로 관리)
+    - C++17 스타일로 개선 방향 (상태 패턴(State Pattern) 도입, Command 패턴, 또는 STL 알고리즘 추상화)
+    - Testability: 현재 구조가 Fake/Mock 주입에 최적화되어 있는지 평가
+    - 리팩토링 우선순위 (1~5)와 이유
+[Format] Markdown 표 (문제점 | 위반 원칙/스멜 | 영향 | 개선 방향 | 우선순위)
+    + 개선 방향 요약. docs\ 디렉토리 아래 code_quality_report.md로 저장
+[Wrap-up] 
+ - Report\ 디렉토리 아래에 작업 내용 보고서를 번호를 붙여 생성하고 저장
+ - 현재까지의 프롬프트 대화 전체를 Prompting\ 디렉토리 아래에 Export Transcript 해줘. Transcript 파일명은 보고서의 이름에서 _report 접미사를 뺀 것으로 해줘.
+
+
+
+
+
+# 04. 테스트 계획 (Test Plan)
+04_테스트_계획_Test_Plan
+
+@TVController.h @README.md @requirements_analysis.md
+
+[Persona] 시니어 QA 리드입니다.
+[Context] C++17, Google Test, GMock, CMake, lcov
+[Task] 테스트 계획서를 작성해줘.
+    - TEST_F 기반 단위 테스트 범위/우선순위 (TVControllerTest)
+    - 경계값 케이스 목록 (채널 0/99, 빈 선호채널, 검색 목록 없을 때의 Up/Down)
+    - 예외/특이 케이스 목록 (연속 숫자 입력 중 OTHER 키 무효화, '0'->'7' 입력 처리)
+    - Test Double 활용 계획: FakeTuner(상태) vs MockTuner(호출 횟수 검증)
+    - 커버리지 목표 (예: 90%+)와 gcov/lcov 측정·개선 전략
+[Format] Markdown 문서. docs\ 디렉토리 아래 test_plan.md로 저장
+[Wrap-up] 
+ - Report\ 디렉토리 아래에 작업 내용 보고서를 번호를 붙여 생성하고 저장
+ - 현재까지의 프롬프트 대화 전체를 Prompting\ 디렉토리 아래에 Export Transcript 해줘. Transcript 파일명은 보고서의 이름에서 _report 접미사를 뺀 것으로 해줘.
+
+
+
+
+
+# 05. 테스트 케이스 작성 (Test Cases)
+05_테스트_케이스_작성_Test_Cases
+
+
+@TVControllerTest.cpp @TVController.h @FakeTuner.h @requirements_analysis.md
+
+[Persona] 테스트 설계에 강한 시니어 C++ QA입니다.
+[Context] C++17, Google Test, GMock
+[Task] README의 6대 핵심 기능별로 최소 1~2개씩 TEST_F를 작성해줘.
+    - 숫자 연속 입력 및 무효화 검증
+    - 선호 채널 추가/삭제 (Toggle)
+    - 다음 선호 채널 (upper_bound 및 wrap-around)
+    - 채널 검색 (FakeTuner의 seekCH 연동)
+    - 검색 유/무에 따른 Up/Down 분기 로직
+    - EXPECT_EQ/ASSERT_EQ로 FakeTuner의 getCurrentCH() 검증
+    - Given-When-Then 주석 구조 사용
+[Format] 완성된 테스트 코드. cmake --build build && ctest가 Green이 되게 작성
+[Wrap-up] 
+ - Report\ 디렉토리 아래에 작업 내용 보고서를 번호를 붙여 생성하고 저장
+ - 현재까지의 프롬프트 대화 전체를 Prompting\ 디렉토리 아래에 Export Transcript 해줘. Transcript 파일명은 보고서의 이름에서 _report 접미사를 뺀 것으로 해줘.
+
+
+
+
+
+# 06. 테스트 실행 & 결함 분석 (Defect Detection)
+06_테스트_실행_결함_분석
+
+@TVControllerTest.cpp @TVController.h @FakeTuner.h
+
+[Persona] 디버깅과 결함 분석에 능한 C++ QA 엔지니어입니다.
+[Task] (여기에 ctest 실패 로그를 붙여넣을 것)
+    1) EXPECT_EQ 실패의 기대/실제 차이 요약
+    2) TVController 내부 버그 위치 특정 (파일명:줄번호, 예: 버퍼 초기화 누락, wrap-around 논리 오류)
+    3) 결함 심각도 (Critical/Major/Minor/Info) 분류 및 근거
+    4) 최소 변경 수정 방안 (C++17 스타일)
+       - 단, Tuner.h 인터페이스 및 테스트 대역의 본질적 목적 훼손 금지
+[Format] 수정 diff 제안 + cmake --build build && ctest Green 확인 절차
+[Wrap-up] 
+ - Report\ 디렉토리 아래에 작업 내용 보고서를 번호를 붙여 생성하고 저장
+ - 현재까지의 프롬프트 대화 전체를 Prompting\ 디렉토리 아래에 Export Transcript 해줘. Transcript 파일명은 보고서의 이름에서 _report 접미사를 뺀 것으로 해줘.
+
+
+
+
+# 07. 결함 목록 문서화 (defect_list.md)
+07_결함_목록_문서화
+
+[Persona] QA 리드입니다.
+[Context] 현재까지 발견된 테스트 실패/결함들을 문서화합니다.
+[Task] 발견된 결함을 다음 형식으로 defect_list.md에 정리해줘.
+    항목: [ID] [Severity] [Feature] [Steps] [Expected] [Actual] [Root Cause] [Fix Summary]
+    (Feature 예시: NumberInput, FavoriteToggle, NextFavorite, UpDown)
+[Format] Markdown. docs\ 디렉토리 아래 defect_list.md로 저장
+[Wrap-up] 
+ - Report\ 디렉토리 아래에 작업 내용 보고서를 번호를 붙여 생성하고 저장
+ - 현재까지의 프롬프트 대화 전체를 Prompting\ 디렉토리 아래에 Export Transcript 해줘. Transcript 파일명은 보고서의 이름에서 _report 접미사를 뺀 것으로 해줘.
+
+
+
+
+# 08. Golden Master 자동화 (회귀 안전장치)
+08_Golden_Master_자동화
+
+@ApprovalTest.cpp @TVController.h 
+
+[Persona] 회귀 테스트(Approval/Golden Master) 설계 전문가입니다.
+[Context] C++17, Google Test, ApprovalTests.cpp, CMake
+[Task] std::cout 로그나 외부 의존성(Tuner) 호출 순서를 기반으로 Golden Master를 설계/구현해줘.
+    1) ApprovalTests.cpp를 활용한 expected 출력 파일(.approved.txt) 생성/보관 전략
+    2) TVController의 pushButton 연속 호출에 따른 상태 변화를 캡처하는 테스트 구현
+    3) CMake/ctest에 통합하는 방법
+    4) 리팩토링 중 로그가 제거될 경우, Approval Test를 상태 검증으로 대체하거나 폐기하는 전략 제시
+[Format] 테스트 코드 + CMake 수정안 + 실행 방법
+[Wrap-up] 
+ - Report\ 디렉토리 아래에 작업 내용 보고서를 번호를 붙여 생성하고 저장
+ - 현재까지의 프롬프트 대화 전체를 Prompting\ 디렉토리 아래에 Export Transcript 해줘. Transcript 파일명은 보고서의 이름에서 _report 접미사를 뺀 것으로 해줘.
+
+
+
+
+# 09. 리팩토링 지원 (테스트 Green 유지)
+09_리팩토링_지원
+
+@TVController.h @code_quality_report.md @requirements_analysis.md
+
+[Persona] 모던 C++ 리팩토링 코치입니다.
+[Context] 제약: Tuner.h 수정 금지, 테스트 Green 상태에서만 진행
+[Task] TVController 리팩토링 계획을 단계별로 제안해줘.
+    - 거대한 pushButton() 내의 if-else/switch 문 축소 및 함수 추출 (커밋 단위로 쪼개기)
+    - 입력 버퍼 상태(숫자 입력 중 vs 대기 중)에 따른 State 패턴 적용 또는 Enum 기반 매핑
+    - std::vector 및 STL 알고리즘(upper_bound, lower_bound)을 활용한 로직 캡슐화
+    - applyChannel() 내 예외 처리 방어 로직 강화
+[Format] 단계별 체크리스트 + 각 단계 검증 방법 (cmake --build && ctest)
+[Wrap-up] 
+ - Report\ 디렉토리 아래에 작업 내용 보고서를 번호를 붙여 생성하고 저장
+ - 현재까지의 프롬프트 대화 전체를 Prompting\ 디렉토리 아래에 Export Transcript 해줘. Transcript 파일명은 보고서의 이름에서 _report 접미사를 뺀 것으로 해줘.
+
+
+
+
+# 10. 결함 관리 & 보고 (Defect Management)
+10_결함_관리_보고
+
+@defect_list.md @requirements_analysis.md @test_plan.md
+
+[Persona] QA 리드 엔지니어입니다.
+[Task] 결함 관리 문서를 defect_report.md로 작성해줘.
+    1) 결함 분류 체계:
+       Severity (Critical/Major/Minor/Info) x Feature (숫자입력, 선호채널, 검색, Up/Down) 매트릭스 표
+    2) 결함 보고서 템플릿 (재현/기대/실제/원인/수정/검증)
+    3) 품질 메트릭 수집 계획
+       - 테스트 통과율, 커버리지(lcov), 단계별 결함 발견율
+       - Test Double(Fake/Mock) 활용에 따른 버그 격리 효과 분석
+[Format] Markdown. docs\ 디렉토리 아래 defect_report.md로 저장
+[Wrap-up] 
+ - Report\ 디렉토리 아래에 작업 내용 보고서를 번호를 붙여 생성하고 저장
+ - 현재까지의 프롬프트 대화 전체를 Prompting\ 디렉토리 아래에 Export Transcript 해줘. Transcript 파일명은 보고서의 이름에서 _report 접미사를 뺀 것으로 해줘.
+
+
+
+
+# 11. QA 종합 검토 (최종 보고서)
+11_QA_종합_검토
+
+@requirements_analysis.md @code_quality_report.md @test_plan.md @defect_report.md
+@TVController.h @TVControllerTest.cpp
+
+[Persona] QA 리드 엔지니어 관점에서
+[Task] TDD_TV C++ 프로젝트의 QA 활동 및 리팩토링 결과를 종합 검토해줘.
+    1) 테스트 완료율/커버리지 (목표 대비 lcov 수치 달성 여부)
+    2) 결함 패턴 분석 (어느 기능에서 가장 많은 논리 오류가 발생했는가? 예: 상태 전이, Wrap-around)
+    3) Test Double(FakeTuner/MockTuner) 도입 및 Approval Test가 리팩토링에 미친 긍정적 효과
+    4) 다음 임베디드/컨트롤러 TDD 프로젝트를 위한 Best Practice 5가지
+    5) Cursor AI 활용 효과 (시간 단축/경계값 도출/코드 스멜 개선) 정량·정성 요약
+[Format] Markdown 최종 보고서. docs\ 디렉토리 아래 qa_final_report.md로 저장
+[Wrap-up] 
+ - Report\ 디렉토리 아래에 작업 내용 보고서를 번호를 붙여 생성하고 저장
+ - 현재까지의 프롬프트 대화 전체를 Prompting\ 디렉토리 아래에 Export Transcript 해줘. Transcript 파일명은 보고서의 이름에서 _report 접미사를 뺀 것으로 해줘.

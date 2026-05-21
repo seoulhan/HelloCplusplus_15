@@ -1,0 +1,8 @@
+rem github 프로젝트 클론
+git clone <remote_url.git>
+
+rem 프로젝트 내부로 이동
+cd <project_name>
+
+rem 빈 clone 프로젝트에서 초기 작업 브랜치 생성
+git checkout -b dev
