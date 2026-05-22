@@ -1,0 +1,31 @@
+ㅁ external 직접 붙여넣기  사용 시
+add_subdirectory(external/googletest-1.16.0)
+
+
+
+ㅁ 자동 다운로드 시
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
+)
+FetchContent_MakeAvailable(googletest)
+
+
+
+ㅁ 다른방법 자동 다운로드
+include(FetchContent)
+
+FetchContent_Declare(
+    googletest
+    URL https://github.com/google/googletest/archive/refs/tags/v1.16.0.zip
+    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+    TLS_VERIFY OFF
+)
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
+
+
+
+
