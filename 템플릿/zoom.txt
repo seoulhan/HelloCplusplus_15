@@ -1,0 +1,254 @@
+https://us05web.zoom.us/j/87454272543?pwd=hcYI8ibbuXSs32MYneZHkfQYl4720X.1
+
+github Token SD_key : ghp_Ct4DyRAi7rLlk*****wRZJWCsOJpudfhX4x3mXGlj
+
+
+echo "# HelloCplusplus_15" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/seoulhan/HelloCplusplus_15.git
+git push -u origin main
+
+
+
+
+git config --global user.name "seoulhan"
+git config --global user.email "seoulhanknox@gmail.com"
+
+명령으로 정보를 저장 할 수 있습니다. 기존에 잘못된 정보가 있는경우 아래의 명령어를 먼저 실행 후 등록 해주면 됩니다.
+
+git config --unset --global user.name
+git config --unset --global user.email
+
+
+
+
+========================
+git init
+git clone https://github.com/seoulhan:ghp_Ct4DyRAi7rLlkwRZJW******CsOJpudfhX4x3mXGlj@github.com/seoulhan/Arithmetic_15.git
+cd everytime_scraper
+
+git config --global user.email "seoulhanknox@gmail.com"
+git config --global user.name "seoulhan"
+
+git add . 
+git commit -m "COMMIT MESSAGE"
+git push origin main
+출처: https://gibro.tistory.com/9 [지브로의 개발 블로그:티스토리]
+
+
+============================
+
+
+https://<GITHUB_ACCESS_TOKEN>@github.com/<GITHUB_USERNAME>/<REPOSITORY_NAME>.git
+
+
+
+-----------------------------------------------
+
+git init
+git remote add origin https://ghp_Ct4DyR******Ai7rLlkwRZJWCsOJpudfhX4x3mXGlj@github.com/seoulhan/PrimeChecker_15.git
+git commit -m "COMMIT MESSAGE"
+git push origin master
+
+
+------------------------------
+
+11	이완도	wanedu88@gmail.com	C팀	발표3	발표3-1	발표6	발표6-1
+12	정웅		jwadeung98@gmail.com			발표3-2		발표6-2
+13	최재석	jskor013@gmail.com			발표3-3		발표6-3
+14	최현호	dkssudsdkssu@gmail.com			발표3-4		발표6-4
+15	한승호	seoulhanknox@gmail.com		발표3-5		발표6-5
+
+교육담당자	최혁성	chlgurt@gmail.com					
+강사		김대경	kzfornetwork@gmail.com	
+
+Author:한승호, Reviewer:이완도, 정웅, 최재석, 최현호, 최혁성, 김대경
+
+----------------------------------
+
+예제소스 복사 후 할 일
+
+1. Build 디렉토리 삭제 (cmake 충돌함)
+2. CMake에서 configure 실행 -> c:gcc cpp:g++ 옵션 선택 -> build까지 실행
+3. github에 레포지토리 생성
+	Description : Author:한승호, Reviewer:이완도, 정웅, 최재석, 최현호, 최혁성, 김대경
+	Settings -> Collaborators -> 팀원/담당자/강사 초대
+4. VSCode 에서 Terminal -> git bash
+5. github 최초 업로드
+	git init
+	git add .
+	git remote add origin https://ghp_Ct4DyRAi7rLlkwRZJWCsOJp******udfhX4x3mXGlj@github.com/seoulhan/<레포지토리 이름>.git
+	git commit -m "<커밋 메시지>"
+	git push origin master
+
+6. lcov 구성
+	.vscode/settings.json 안에 다음 lcov.info 경로 정보 추가 (이유는 모르겠는데 build 아래여야 함)
+		{
+		  "coverage-gutters.lcovname": "build/lcov.info"
+		}
+	CMakeLists.txt 에서 enable_testing() 다음 타겟 옵션에 다음과 같이 --coverage 정보 추가
+		add_library(<필요 라이브러리 명> <라이브러리 소스파일 목록>)
+		...
+		enable_testing()
+		add_executable(<테스트 프로젝트 명> <테스트 소스파일 목록>)
+		target_compile_options(<테스트 프로젝트 명> PRIVATE --coverage)
+		target_link_libraries(<테스트 프로젝트 명> <필요 라이브러리 명> --coverage)
+		add_test( ... )
+
+	혹은 다음 구성으로 --coverage 정보 추가
+		add_subdirectory(external/googletest-1.16.0) # add_subdirectory -> CMakeLists.txt 서브프로젝트를 감지하는 명령
+
+		enable_testing()
+
+		add_executable(<테스트 EXE 타겟> test/person_test.cpp) # 소스파일 직접 연결
+		target_include_directories(<테스트 EXE 타겟> PRIVATE src) # include (header) 디렉토리 전용
+		target_link_libraries(<테스트 EXE 타겟> GTest::gtest_main)
+
+		# ---------- Add to coverage ---------------
+		if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+		    target_compile_options(<테스트 EXE 타겟> PRIVATE --coverage)
+		    target_link_options(<테스트 EXE 타겟> PRIVATE --coverage)
+		endif()
+		# ------------------------------------------
+
+		include(GoogleTest)
+		gtest_discover_tests(<테스트 EXE 타겟>)
+
+
+	갱신된 CMake 로 configure -> build -> test 모두 실행
+
+	* coverage 생성 결과 성공 확인 : dir /s *.gcda -> \build\CMakeFiles\<테스트 프로젝트 명>.dir\tests\****.gcda 파일 생성됨
+
+	프로젝트루트\build>lcov --capture --directory . --output-file lcov.info 실행 
+	프로젝트루트>lcov --capture --directory build --base-directory . --output-file lcov.info 실행
+	-> lcov.info 파일 두개 생성 (이유는 모르겠음)
+
+	test 소스파일을 VSCode에서 연 채로 하단 Coverage Gutters 의 Watch 클릭 -> 커버리지 퍼센트 표시됨
+
+------------------------------------------
+add_subdirectory(external/googletest-1.16.0) # add_subdirectory -> CMakeLists.txt 서브프로젝트를 감지하는 명령
+add_executable(<빌드 타겟> <빌드대상 소스>) # -> 빌드할 소스코드 파일을 'EXE로 만들 타겟' 객체에 추가하는 명령
+add_library(<라이브러리 타겟> <라이브러리 넣을 소스>) # -> 단위 소스코드 파일을 '라이브러리 단위로 묶을 타겟' 객체에 추가하는 명령
+target_link_libraries(<대상 타겟> <소스 타겟>) # -> '소스 타겟' 을 '대상 타겟' 에 추가하는 명령
+
+   <Library Source>
+        ㄴ add_library  -> <Library Target>
+
+   <EXE Source>
+       ㄴ add_executable -> <EXE Target>
+
+    <Library Target>
+       ㄴ target_link_libraries -> <EXE Target>
+
+Coverage 추가 시 컴파일러 & 링커 모두에 지시 필요
+	target_compile_options(<테스트용 빌드 타겟> PRIVATE --coverage) # -> (컴파일러용) 해당 타겟에 coverage 정보를 포함시키는 명령
+	target_link_options(<테스트 EXE 타겟> PRIVATE --coverage) # -> -> (링커용) 해당 타겟에 coverage 정보를 포함시키는 명령
+
+	target_link_libraries(person_test PRIVATE --coverage) # (구버전, 링커용) 해당 타겟에 (다른 타겟 대신) coverage 정보를 포함시키는 명령 (target_link_options 와 교체관계)
+
+
+----------------------------------
+
+VS Code에서 현재 master 브랜치에 초기 push를 완료한 상태에서 dev 브랜치를 만들어 작업하고, 다시 dev 브랜치로 push하는 절차는 다음과 같습니다. 1.2.9, 1.2.13
+1. VS Code에서 dev 브랜치 생성 및 전환 (Checkout)
+VS Code 하단 상태 표시줄(파란색 바) 왼쪽의 master (또는 main)를 클릭합니다. 1.2.1
+상단에 나타나는 명령 팔레트에서 + Create new branch를 선택합니다. 1.2.9
+새 브랜치 이름으로 dev를 입력하고 엔터를 칩니다. 1.2.17
+이제 VS Code 하단이 dev로 변경되었습니다. (로컬 dev 브랜치 생성 및 전환 완료) 1.2.15 
+2. 로컬에서 수정 작업 및 커밋
+파일을 수정합니다.
+왼쪽 메뉴에서 소스 제어(Source Control) 아이콘(나뭇가지 모양)을 클릭합니다. 1.1.6
+변경 사항(Changes) 옆의 + (Stage All Changes) 버튼을 눌러 스테이징합니다. 1.1.11
+메시지 창에 커밋 메시지(예: "Add new feature")를 입력하고 커밋(Commit) 버튼을 누릅니다. 1.1.6 
+3. dev 브랜치 원격(GitHub)에 push 하기 
+소스 제어 패널 상단의 ... (더 보기) 메뉴를 클릭합니다.
+Push 또는 Publish Branch (처음 push할 때)를 클릭합니다. 1.1.6, 1.2.17
+원격 저장소에 dev 브랜치가 생성되며 수정사항이 반영됩니다. 
+터미널(VS Code 내장) 명령어로 수행할 경우
+UI가 익숙하지 않다면 터미널(Ctrl + `)에서 다음 명령어를 순서대로 입력하세요. 1.1.8
+bash
+# 1. dev 브랜치 생성 및 이동
+git checkout -b dev
+
+# 2. 작업 후, 모든 변경사항 스테이징
+git add .
+
+# 3. 커밋
+git commit -m "작업 내용"
+
+# 4. 원격 저장소에 push 및 추적 브랜치 설정
+git push -u origin dev
+
+
+
+-----------------------------------
+
+브랜치 작업 전 동기화 체크
+
+sh han@han MINGW64 /c/DEV/GildedRose_15 (dev)
+$ git remote -v
+origin  https://github.com/seoulhan/GildedRose_15.git (fetch)
+origin  https://github.com/seoulhan/GildedRose_15.git (push)
+
+sh han@han MINGW64 /c/DEV/GildedRose_15 (dev)
+$ git pull
+Already up to date.
+
+sh han@han MINGW64 /c/DEV/GildedRose_15 (dev)
+$ git branch
+* dev
+  main
+
+
+---------------------------------
+
+현재 브랜치에서 갈라지는 새로운 브랜치 생성 & 거기로 현위치 이동
+
+git checkout -b <새 브랜치 이름>
+
+--------------------------------
+
+approvaltest  방법
+
+	CMakeFiles.txt 에 다음 라이브러리 추가
+
+		FetchContent_Declare(
+		    ApprovalTests
+		    GIT_REPOSITORY https://github.com/approvals/ApprovalTests.cpp.git
+		    GIT_TAG v.10.13.0
+		)
+		FetchContent_MakeAvailable(approvaltests)
+
+	enable_testing() 다음에 다음 라이브러리 추가
+
+		target_link_libraries(<빌드(테스트) 타겟> PRIVATE ApprovalTests::ApprovalTests)
+
+
+
+----------------------------------
+Openrouter
+
+sk-or-v1-75dc7c605138068dd49c08d******e9ecceb1649416d48fcbed70240858d7998a3c831
+
+
+-------------------------------------
+
+
+\Report\ 디렉토리 아래에 숫자 접두어를 붙여서 보고서를 생성해.
+
+
+-------------------------------------
+
+Repository 생성 (이름_15)
+ Readme 생성 체크
+
+Upload Files 에서 제공된 파일들 드랍
+
+개발 부모 디렉토리에서 cmd 열기
+
+	git clone https://github.com/seoulhan/FeedbackAnalyzer_15.git
+	-> FeedbackAnalyzer_15 디렉토리 및 내용물 자동 생성
+
