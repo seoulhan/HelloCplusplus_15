@@ -1,6 +1,6 @@
 https://us05web.zoom.us/j/87454272543?pwd=hcYI8ibbuXSs32MYneZHkfQYl4720X.1
 
-github Token SD_key : ghp_Ct4DyRAi7rLlk*****wRZJWCsOJpudfhX4x3mXGlj
+github Token SD_key : <token>
 
 
 echo "# HelloCplusplus_15" >> README.md
@@ -27,7 +27,7 @@ git config --unset --global user.email
 
 ========================
 git init
-git clone https://github.com/seoulhan:ghp_Ct4DyRAi7rLlkwRZJW******CsOJpudfhX4x3mXGlj@github.com/seoulhan/Arithmetic_15.git
+git clone https://github.com/seoulhan:<token>@github.com/seoulhan/Arithmetic_15.git
 cd everytime_scraper
 
 git config --global user.email "seoulhanknox@gmail.com"
@@ -49,7 +49,7 @@ https://<GITHUB_ACCESS_TOKEN>@github.com/<GITHUB_USERNAME>/<REPOSITORY_NAME>.git
 -----------------------------------------------
 
 git init
-git remote add origin https://ghp_Ct4DyR******Ai7rLlkwRZJWCsOJpudfhX4x3mXGlj@github.com/seoulhan/PrimeChecker_15.git
+git remote add origin https://<token>@github.com/seoulhan/PrimeChecker_15.git
 git commit -m "COMMIT MESSAGE"
 git push origin master
 
@@ -80,7 +80,7 @@ Author:한승호, Reviewer:이완도, 정웅, 최재석, 최현호, 최혁성, �
 5. github 최초 업로드
 	git init
 	git add .
-	git remote add origin https://ghp_Ct4DyRAi7rLlkwRZJWCsOJp******udfhX4x3mXGlj@github.com/seoulhan/<레포지토리 이름>.git
+	git remote add origin https://<token>@github.com/seoulhan/<레포지토리 이름>.git
 	git commit -m "<커밋 메시지>"
 	git push origin master
 
